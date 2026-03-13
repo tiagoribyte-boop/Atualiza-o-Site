@@ -497,8 +497,11 @@ td { padding: 11px 14px; vertical-align: middle; }
   border-radius: 14px;
   padding: 16px 20px;
   position: relative; overflow: hidden;
-  transition: background .3s, border-color .3s;
+  transition: background .3s, border-color .3s, transform .15s;
+  cursor: pointer;
 }
+.brand-counter-card:hover { transform: translateY(-2px); }
+.brand-counter-card.bc-active { border-color: var(--get-green); box-shadow: 0 0 16px var(--get-green-glow); }
 .brand-counter-card::after {
   content: ''; position: absolute;
   top: 0; left: 0; right: 0; height: 3px;
@@ -964,8 +967,8 @@ function renderChart() {
   const canvas = document.getElementById('launchChart');
   if (!canvas) return;
 
-  // Determine which data to chart based on active brand
-  const chartData = activeBrand === 'all' ? DATA : DATA.filter(r => getBrand(r.descricao) === activeBrand);
+  // Use the filtered array so chart reflects all active filters (brand + status + search)
+  const chartData = filtered;
 
   // Group by month
   const monthMap = {};
@@ -1134,7 +1137,7 @@ function renderBrandCounters() {
 
   document.getElementById('brandCounters').innerHTML = brands.map(b => {
     const c = counters[b];
-    return `<div class="brand-counter-card bc-${b.toLowerCase()}">
+    return `<div class="brand-counter-card bc-${b.toLowerCase()}${activeBrand===b?' bc-active':''}" onclick="setBrand('${b}')">
       <div class="brand-counter-head">
         <span class="brand-counter-name">${b}</span>
       </div>
