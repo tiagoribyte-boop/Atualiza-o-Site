@@ -1293,6 +1293,7 @@ function handleFileUpload(input) {
       if (!newData.length) throw new Error('Nenhum produto encontrado');
       DATA = newData;
       activeFilter = 'all'; searchQ = ''; activeBrand = 'all';
+      localStorage.setItem('get-active-brand', 'all');
       document.getElementById('searchInput').value = '';
       applyFilters();
       showUploadStatus('success', `✅ ${newData.length} produtos importados com sucesso!`);
