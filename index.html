@@ -459,6 +459,109 @@ td { padding: 11px 14px; vertical-align: middle; }
 .pb.on { background: var(--get-green); border-color: var(--get-green); color: #0a0b0d; font-weight: 700; }
 .pb:disabled { opacity: .3; cursor: default; pointer-events: none; }
 
+
+/* ─── BRAND TABS ─── */
+.brand-tabs-wrap {
+  position: relative; z-index: 1;
+  margin: 20px 36px 0;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.brand-tab {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); padding: 10px 20px;
+  border-radius: 12px; font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all .2s; white-space: nowrap;
+  position: relative;
+}
+.brand-tab:hover { border-color: rgba(128,128,128,.4); color: var(--text); transform: translateY(-1px); }
+.brand-tab.active { background: var(--get-green); border-color: var(--get-green); color: #0a0b0d; }
+.brand-tab .brand-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 700;
+  background: rgba(0,0,0,0.15); padding: 2px 8px;
+  border-radius: 100px; min-width: 24px; text-align: center;
+}
+.brand-tab.active .brand-count { background: rgba(0,0,0,0.2); }
+
+/* ─── BRAND COUNTERS ─── */
+.brand-counters-wrap {
+  position: relative; z-index: 1;
+  margin: 12px 36px 0;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+}
+.brand-counter-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 20px;
+  position: relative; overflow: hidden;
+  transition: background .3s, border-color .3s;
+}
+.brand-counter-card::after {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  border-radius: 14px 14px 0 0;
+}
+.brand-counter-card.bc-get::after { background: #b5cc00; }
+.brand-counter-card.bc-ox::after { background: #38b2ff; }
+.brand-counter-card.bc-tcn::after { background: #c084fc; }
+.brand-counter-head {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+}
+.brand-counter-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+}
+.bc-get .brand-counter-name { color: #b5cc00; }
+.bc-ox .brand-counter-name { color: #38b2ff; }
+.bc-tcn .brand-counter-name { color: #c084fc; }
+.brand-counter-total {
+  font-size: 28px; font-weight: 800; line-height: 1;
+}
+.bc-get .brand-counter-total { color: #b5cc00; }
+.bc-ox .brand-counter-total { color: #38b2ff; }
+.bc-tcn .brand-counter-total { color: #c084fc; }
+.brand-counter-detail {
+  display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap;
+}
+.brand-counter-detail span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: var(--text3);
+}
+
+/* ─── CHART ─── */
+.chart-wrap {
+  position: relative; z-index: 1;
+  margin: 16px 36px 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px 24px;
+  transition: background .3s, border-color .3s;
+}
+.chart-head {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;
+}
+.chart-title {
+  font-size: 12px; font-weight: 700; color: var(--text2);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+.chart-container { position: relative; height: 220px; width: 100%; }
+
+/* ─── AUTO-SAVE INDICATOR ─── */
+.autosave-pill {
+  display: flex; align-items: center; gap: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: var(--text3);
+  letter-spacing: .05em;
+}
+.autosave-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--get-green);
+  transition: opacity .3s;
+}
+.autosave-dot.saving { animation: blink .5s ease-in-out 3; }
+
 /* ─── EMPTY ─── */
 .empty-state { padding: 60px 20px; text-align: center; font-size: 14px; color: var(--text3); }
 .empty-state .ei { font-size: 42px; opacity: .3; margin-bottom: 12px; display: block; }
@@ -466,11 +569,13 @@ td { padding: 11px 14px; vertical-align: middle; }
 /* ─── RESPONSIVE ─── */
 @media(max-width:900px) {
   .stats-wrap { grid-template-columns: repeat(2, 1fr); }
-  .header, .upload-section, .stats-wrap, .progress-wrap, .controls-wrap, .table-wrap, .page-wrap { margin-left:16px; margin-right:16px; }
+  .header, .upload-section, .stats-wrap, .progress-wrap, .controls-wrap, .table-wrap, .page-wrap, .brand-tabs-wrap, .brand-counters-wrap, .chart-wrap { margin-left:16px; margin-right:16px; }
   .header { padding: 0 16px; }
   .col-h { display: none; }
+  .brand-counters-wrap { grid-template-columns: 1fr; }
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -521,6 +626,13 @@ td { padding: 11px 14px; vertical-align: middle; }
   </div>
 </div>
 
+
+<!-- BRAND TABS -->
+<div class="brand-tabs-wrap" id="brandTabs"></div>
+
+<!-- BRAND COUNTERS -->
+<div class="brand-counters-wrap" id="brandCounters"></div>
+
 <!-- STATS -->
 <div class="stats-wrap" id="statsGrid"></div>
 
@@ -532,6 +644,21 @@ td { padding: 11px 14px; vertical-align: middle; }
   </div>
   <div class="prog-track" id="progBar"></div>
   <div class="prog-legend" id="progLegend"></div>
+</div>
+
+
+<!-- CHART -->
+<div class="chart-wrap">
+  <div class="chart-head">
+    <span class="chart-title">Lancamentos por Mes</span>
+    <div class="autosave-pill" id="autosaveIndicator">
+      <span class="autosave-dot" id="autosaveDot"></span>
+      <span id="autosaveText">Auto-save ativo</span>
+    </div>
+  </div>
+  <div class="chart-container">
+    <canvas id="launchChart"></canvas>
+  </div>
 </div>
 
 <!-- CONTROLS -->
@@ -613,6 +740,7 @@ let DATA = [{"status": "Finalizado", "produto": "71794", "descricao": "MEM DDR3 
 let filtered = [];
 let activeFilter = 'all';
 let searchQ = '';
+let activeBrand = 'all';
 let sk = 'dt_prev', sd = 1;
 let page = 1;
 const PER = 50;
@@ -639,6 +767,19 @@ function parseDate(s) {
   const p = s.split('/');
   return p.length === 3 ? new Date(+p[2], +p[1]-1, +p[0]).getTime() : 0;
 }
+
+function getBrand(desc) {
+  const d = (desc||'').toUpperCase();
+  // Check for brand keywords - order matters (check specific first)
+  if (/\bTCN\b/.test(d)) return 'TCN';
+  if (/\bOX\b/.test(d)) return 'OX';
+  // Default to GET for items containing GET or anything else
+  if (/\bGET\b/.test(d)) return 'GET';
+  return 'GET';
+}
+
+const BRAND_COLORS = { GET: '#b5cc00', OX: '#38b2ff', TCN: '#c084fc' };
+
 function chipOf(v) {
   const n = nv(v);
   if (n==='ok') return `<span class="chip chip-ok">OK</span>`;
@@ -663,6 +804,7 @@ function statusClass(s) {
 function changeStatus(idx, val) {
   DATA[idx].status = val;
   saveStatusToStorage();
+  autoSaveAll();
   applyFilters();
   toast('✅', `Status de ${DATA[idx].produto} → "${val}"`);
 }
@@ -701,6 +843,44 @@ function updateFotoPreview() {
   }
 }
 
+
+// ─── AUTO-SAVE ALL DATA ───
+const LS_DATA_KEY = 'get-produto-data-full';
+
+function autoSaveAll() {
+  try {
+    localStorage.setItem(LS_DATA_KEY, JSON.stringify(DATA));
+    showAutoSaveIndicator();
+  } catch(e) { console.warn('Auto-save failed:', e); }
+}
+
+function showAutoSaveIndicator() {
+  const dot = document.getElementById('autosaveDot');
+  const text = document.getElementById('autosaveText');
+  if (dot && text) {
+    dot.classList.add('saving');
+    text.textContent = 'Salvando...';
+    setTimeout(() => {
+      dot.classList.remove('saving');
+      text.textContent = 'Auto-save ativo';
+    }, 1500);
+  }
+}
+
+function loadFullData() {
+  try {
+    const saved = localStorage.getItem(LS_DATA_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        DATA = parsed;
+        return true;
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+
 // ─── LOCAL STORAGE ───
 const LS_KEY = 'get-produto-links';
 const LS_STATUS_KEY = 'get-produto-status';
@@ -733,6 +913,7 @@ function confirmFotoLink() {
   const val = document.getElementById('fotoModalInput').value.trim();
   DATA[fotoModalIdx].foto_link = val;
   saveLinksToStorage();
+  autoSaveAll();
   applyFilters();
   toast('🖼️', val ? `Link salvo para ${DATA[fotoModalIdx].produto}` : `Link removido de ${DATA[fotoModalIdx].produto}`);
   document.getElementById('fotoModalOverlay').classList.remove('open');
@@ -743,16 +924,100 @@ function deleteFotoLink() {
   if (fotoModalIdx < 0) return;
   DATA[fotoModalIdx].foto_link = '';
   saveLinksToStorage();
+  autoSaveAll();
   applyFilters();
   toast('🗑️', `Link removido de ${DATA[fotoModalIdx].produto}`);
   document.getElementById('fotoModalOverlay').classList.remove('open');
   fotoModalIdx = -1;
 }
 
+
+// ─── CHART ───
+let launchChart = null;
+function renderChart() {
+  const canvas = document.getElementById('launchChart');
+  if (!canvas) return;
+
+  // Determine which data to chart based on active brand
+  const chartData = activeBrand === 'all' ? DATA : DATA.filter(r => getBrand(r.descricao) === activeBrand);
+
+  // Group by month
+  const monthMap = {};
+  chartData.forEach(r => {
+    if (!r.dt_prev) return;
+    const parts = r.dt_prev.split('/');
+    if (parts.length !== 3) return;
+    const key = parts[1] + '/' + parts[2]; // MM/YYYY
+    monthMap[key] = (monthMap[key]||0) + 1;
+  });
+
+  // Sort by date
+  const sorted = Object.entries(monthMap).sort((a, b) => {
+    const [ma, ya] = a[0].split('/').map(Number);
+    const [mb, yb] = b[0].split('/').map(Number);
+    return (ya*12+ma) - (yb*12+mb);
+  });
+
+  const labels = sorted.map(([k]) => k);
+  const values = sorted.map(([, v]) => v);
+
+  // Brand-specific colors
+  const brandColor = activeBrand !== 'all' ? BRAND_COLORS[activeBrand] : '#b5cc00';
+
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const textColor = isDark ? '#8a909e' : '#4a5568';
+
+  if (launchChart) launchChart.destroy();
+
+  launchChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: activeBrand === 'all' ? 'Todas' : activeBrand,
+        data: values,
+        backgroundColor: brandColor + '33',
+        borderColor: brandColor,
+        borderWidth: 2,
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: isDark ? '#1e222b' : '#fff',
+          titleColor: isDark ? '#f0f2f5' : '#111',
+          bodyColor: isDark ? '#8a909e' : '#4a5568',
+          borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+          borderWidth: 1,
+          cornerRadius: 8,
+          padding: 10,
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 10 } }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 10 }, stepSize: 1 }
+        }
+      }
+    }
+  });
+}
+
 // ─── EXPORT CSV ───
 function exportCSV() {
   const headers = ['STATUS','PRODUTO','DESCRIÇÃO','Dt Prev Liber','Chegou?','Novidades','Fotos','Landing Pages','Responsável'];
-  const rows = DATA.map(r => [
+  const rows = filtered.map(r => [
     r.status, r.produto, r.descricao, r.dt_prev, r.chegou,
     r.novidades, r.foto_link || r.fotos, r.lp, r.responsavel
   ].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(';'));
@@ -762,7 +1027,7 @@ function exportCSV() {
   const a = document.createElement('a');
   a.href = url; a.download = 'acompanhamento_get.csv'; a.click();
   URL.revokeObjectURL(url);
-  toast('📥', 'CSV exportado com links incluídos!');
+  toast('📥', `CSV exportado — ${filtered.length} produtos filtrados!`);
 }
 
 // ─── STATS ───
@@ -798,6 +1063,8 @@ function renderStats() {
     <div class="prog-fill" style="width:${pI}%;background:#38b2ff;margin-left:1px"></div>
     <div class="prog-fill" style="width:${pN}%;background:#ff9f38;margin-left:1px"></div>
     <div class="prog-fill" style="width:${pP}%;background:#c084fc;margin-left:1px"></div>`;
+  renderBrandTabs();
+  renderBrandCounters();
   document.getElementById('progLegend').innerHTML = `
     <span class="prog-item"><span class="prog-dot" style="background:#b5cc00"></span>Finalizado (${c.Finalizado})</span>
     <span class="prog-item"><span class="prog-dot" style="background:#38b2ff"></span>Iniciado (${c.Iniciado})</span>
@@ -805,14 +1072,72 @@ function renderStats() {
     <span class="prog-item"><span class="prog-dot" style="background:#c084fc"></span>Pausado (${c.Pausado||0})</span>`;
 }
 
+
+// ─── BRAND TABS ───
+function renderBrandTabs() {
+  const brands = ['all', 'GET', 'OX', 'TCN'];
+  const counts = { GET: 0, OX: 0, TCN: 0 };
+  DATA.forEach(r => { const b = getBrand(r.descricao); counts[b] = (counts[b]||0)+1; });
+  const total = DATA.length;
+
+  document.getElementById('brandTabs').innerHTML = brands.map(b => {
+    const isActive = activeBrand === b;
+    const count = b === 'all' ? total : (counts[b]||0);
+    const label = b === 'all' ? 'Todas as Marcas' : b;
+    return `<button class="brand-tab${isActive?' active':''}" onclick="setBrand('${b}')">
+      ${label} <span class="brand-count">${count}</span>
+    </button>`;
+  }).join('');
+}
+
+// ─── BRAND COUNTERS ───
+function renderBrandCounters() {
+  const brands = ['GET', 'OX', 'TCN'];
+  const counters = {};
+  brands.forEach(b => { counters[b] = { total: 0, finalizado: 0, iniciado: 0, nao: 0, pausado: 0 }; });
+  DATA.forEach(r => {
+    const b = getBrand(r.descricao);
+    if (!counters[b]) return;
+    counters[b].total++;
+    const s = nv(r.status);
+    if (s==='finalizado') counters[b].finalizado++;
+    else if (s==='iniciado') counters[b].iniciado++;
+    else if (s==='pausado') counters[b].pausado++;
+    else counters[b].nao++;
+  });
+
+  document.getElementById('brandCounters').innerHTML = brands.map(b => {
+    const c = counters[b];
+    return `<div class="brand-counter-card bc-${b.toLowerCase()}">
+      <div class="brand-counter-head">
+        <span class="brand-counter-name">${b}</span>
+      </div>
+      <div class="brand-counter-total">${c.total}</div>
+      <div class="brand-counter-detail">
+        <span>Fin: ${c.finalizado}</span>
+        <span>Ini: ${c.iniciado}</span>
+        <span>Pend: ${c.nao}</span>
+        <span>Paus: ${c.pausado}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setBrand(b) {
+  activeBrand = b;
+  localStorage.setItem('get-active-brand', b);
+  applyFilters();
+}
+
 // ─── FILTERS ───
 function applyFilters() {
   filtered = DATA.filter((r,i) => {
     r._idx = i;
     const mf = activeFilter==='all' || nv(r.status)===nv(activeFilter);
+    const mb = activeBrand==='all' || getBrand(r.descricao)===activeBrand;
     const q = nv(searchQ);
     const ms = !q || nv(r.produto).includes(q) || nv(r.descricao).includes(q) || nv(r.responsavel).includes(q);
-    return mf && ms;
+    return mf && ms && mb;
   });
   filtered.sort((a,b) => {
     let va = a[sk], vb = b[sk];
@@ -821,6 +1146,7 @@ function applyFilters() {
   });
   page = 1;
   renderStats();
+  renderChart();
   render();
 }
 
@@ -944,6 +1270,7 @@ function handleFileUpload(input) {
       document.getElementById('searchInput').value = '';
       applyFilters();
       showUploadStatus('success', `✅ ${newData.length} produtos importados com sucesso!`);
+      autoSaveAll();
       toast('🚀', `Base atualizada — ${newData.length} produtos`);
     } catch(err) {
       showUploadStatus('error', `❌ Erro: ${err.message}`);
@@ -1007,7 +1334,12 @@ document.addEventListener('keydown', e => {
 });
 
 // ─── INIT ───
-loadFromStorage();
+// Try to load full auto-saved data first, fallback to embedded + localStorage
+if (!loadFullData()) {
+  loadFromStorage();
+}
+// Restore brand tab
+activeBrand = localStorage.getItem('get-active-brand') || 'all';
 applyFilters();
 </script>
 </body>
