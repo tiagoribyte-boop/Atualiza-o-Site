@@ -459,6 +459,109 @@ td { padding: 11px 14px; vertical-align: middle; }
 .pb.on { background: var(--get-green); border-color: var(--get-green); color: #0a0b0d; font-weight: 700; }
 .pb:disabled { opacity: .3; cursor: default; pointer-events: none; }
 
+
+/* ─── BRAND TABS ─── */
+.brand-tabs-wrap {
+  position: relative; z-index: 1;
+  margin: 20px 36px 0;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.brand-tab {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); padding: 10px 20px;
+  border-radius: 12px; font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all .2s; white-space: nowrap;
+  position: relative;
+}
+.brand-tab:hover { border-color: rgba(128,128,128,.4); color: var(--text); transform: translateY(-1px); }
+.brand-tab.active { background: var(--get-green); border-color: var(--get-green); color: #0a0b0d; }
+.brand-tab .brand-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 700;
+  background: rgba(0,0,0,0.15); padding: 2px 8px;
+  border-radius: 100px; min-width: 24px; text-align: center;
+}
+.brand-tab.active .brand-count { background: rgba(0,0,0,0.2); }
+
+/* ─── BRAND COUNTERS ─── */
+.brand-counters-wrap {
+  position: relative; z-index: 1;
+  margin: 12px 36px 0;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+}
+.brand-counter-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 20px;
+  position: relative; overflow: hidden;
+  transition: background .3s, border-color .3s;
+}
+.brand-counter-card::after {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  border-radius: 14px 14px 0 0;
+}
+.brand-counter-card.bc-get::after { background: #b5cc00; }
+.brand-counter-card.bc-ox::after { background: #38b2ff; }
+.brand-counter-card.bc-tcn::after { background: #c084fc; }
+.brand-counter-head {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+}
+.brand-counter-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+}
+.bc-get .brand-counter-name { color: #b5cc00; }
+.bc-ox .brand-counter-name { color: #38b2ff; }
+.bc-tcn .brand-counter-name { color: #c084fc; }
+.brand-counter-total {
+  font-size: 28px; font-weight: 800; line-height: 1;
+}
+.bc-get .brand-counter-total { color: #b5cc00; }
+.bc-ox .brand-counter-total { color: #38b2ff; }
+.bc-tcn .brand-counter-total { color: #c084fc; }
+.brand-counter-detail {
+  display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap;
+}
+.brand-counter-detail span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: var(--text3);
+}
+
+/* ─── CHART ─── */
+.chart-wrap {
+  position: relative; z-index: 1;
+  margin: 16px 36px 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px 24px;
+  transition: background .3s, border-color .3s;
+}
+.chart-head {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;
+}
+.chart-title {
+  font-size: 12px; font-weight: 700; color: var(--text2);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+.chart-container { position: relative; height: 220px; width: 100%; }
+
+/* ─── AUTO-SAVE INDICATOR ─── */
+.autosave-pill {
+  display: flex; align-items: center; gap: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: var(--text3);
+  letter-spacing: .05em;
+}
+.autosave-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--get-green);
+  transition: opacity .3s;
+}
+.autosave-dot.saving { animation: blink .5s ease-in-out 3; }
+
 /* ─── EMPTY ─── */
 .empty-state { padding: 60px 20px; text-align: center; font-size: 14px; color: var(--text3); }
 .empty-state .ei { font-size: 42px; opacity: .3; margin-bottom: 12px; display: block; }
@@ -466,11 +569,13 @@ td { padding: 11px 14px; vertical-align: middle; }
 /* ─── RESPONSIVE ─── */
 @media(max-width:900px) {
   .stats-wrap { grid-template-columns: repeat(2, 1fr); }
-  .header, .upload-section, .stats-wrap, .progress-wrap, .controls-wrap, .table-wrap, .page-wrap { margin-left:16px; margin-right:16px; }
+  .header, .upload-section, .stats-wrap, .progress-wrap, .controls-wrap, .table-wrap, .page-wrap, .brand-tabs-wrap, .brand-counters-wrap, .chart-wrap { margin-left:16px; margin-right:16px; }
   .header { padding: 0 16px; }
   .col-h { display: none; }
+  .brand-counters-wrap { grid-template-columns: 1fr; }
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -521,6 +626,13 @@ td { padding: 11px 14px; vertical-align: middle; }
   </div>
 </div>
 
+
+<!-- BRAND TABS -->
+<div class="brand-tabs-wrap" id="brandTabs"></div>
+
+<!-- BRAND COUNTERS -->
+<div class="brand-counters-wrap" id="brandCounters"></div>
+
 <!-- STATS -->
 <div class="stats-wrap" id="statsGrid"></div>
 
@@ -532,6 +644,21 @@ td { padding: 11px 14px; vertical-align: middle; }
   </div>
   <div class="prog-track" id="progBar"></div>
   <div class="prog-legend" id="progLegend"></div>
+</div>
+
+
+<!-- CHART -->
+<div class="chart-wrap">
+  <div class="chart-head">
+    <span class="chart-title">Lancamentos por Mes</span>
+    <div class="autosave-pill" id="autosaveIndicator">
+      <span class="autosave-dot" id="autosaveDot"></span>
+      <span id="autosaveText">Auto-save ativo</span>
+    </div>
+  </div>
+  <div class="chart-container">
+    <canvas id="launchChart"></canvas>
+  </div>
 </div>
 
 <!-- CONTROLS -->
@@ -609,10 +736,13 @@ td { padding: 11px 14px; vertical-align: middle; }
 // ═══ DATA ═══
 let DATA = [{"status": "Finalizado", "produto": "71794", "descricao": "MEM DDR3 8GB 1600 GET", "dt_prev": "15/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71795", "descricao": "MEM DDR4 4GB 2400 GET", "dt_prev": "15/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71796", "descricao": "MEM DDR4 8GB 2400 GET", "dt_prev": "15/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71800", "descricao": "MEM NOT DDR4 16GB 3200 GET", "dt_prev": "15/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71822", "descricao": "SSD 120GB GET SATA", "dt_prev": "15/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71824", "descricao": "SSD 240GB GET SATA", "dt_prev": "15/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71827", "descricao": "SSD 480GB SATA GET", "dt_prev": "15/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71829", "descricao": "SSD 960GB SATA GET", "dt_prev": "15/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71830", "descricao": "SSD 240GB NVME GET", "dt_prev": "15/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71831", "descricao": "SSD 480GB NVME GET", "dt_prev": "15/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71832", "descricao": "SSD 960GB NVME GET", "dt_prev": "15/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71785", "descricao": "PLACA S1155 H61 DDR3 M2 GET", "dt_prev": "26/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71789", "descricao": "PLACA S1150 H81 DDR3 M2 GET", "dt_prev": "26/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71841", "descricao": "PLACA S1151 H310M DDR4 M2 GET", "dt_prev": "26/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71842", "descricao": "PLACA S1151 H110 DDR4 M2 GET", "dt_prev": "26/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71843", "descricao": "PLACA S1700 H610S4 DDR4 M2 GET", "dt_prev": "26/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71844", "descricao": "PLACA AM4 A520 DDR4 M2 GET", "dt_prev": "26/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71845", "descricao": "PLACA AM4 GAMING B450M DDR4 GET", "dt_prev": "26/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "63024", "descricao": "FONTE 350W REAL ATX COM CABO GET", "dt_prev": "26/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "63027", "descricao": "FONTE 500W REAL ATX COM CABO GET", "dt_prev": "26/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71793", "descricao": "MEM DDR3 4GB 1600 GET", "dt_prev": "26/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71798", "descricao": "MEM DDR4 16GB 3200 GET", "dt_prev": "26/07/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71852", "descricao": "PROJ GET 3000 HD VISION 3", "dt_prev": "01/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71853", "descricao": "PROJ GET 7000 FULL HD VISION 7", "dt_prev": "01/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72058", "descricao": "MOUSE WIRELESS WSL PRETO", "dt_prev": "01/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71848", "descricao": "NO BREAK GET UPS 800VA AUT/115V", "dt_prev": "01/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71849", "descricao": "NO BREAK GET UPS 1200VA AUT/115V", "dt_prev": "01/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71850", "descricao": "NO BREAK GET UPS 1500VA AUT/115V", "dt_prev": "01/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71851", "descricao": "NO BREAK GET UPS 3000VA 220/220V", "dt_prev": "01/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72050", "descricao": "MINI NO BREAK UPS GET P/ ROTEADOR 12V", "dt_prev": "01/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72229", "descricao": "CADEIRA GAMER GT MARS 2D", "dt_prev": "10/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72230", "descricao": "CADEIRA GAMER GT MERCURY 2D", "dt_prev": "10/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72371", "descricao": "CADEIRA OFFICE FLEX PRO GET", "dt_prev": "26/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "62429", "descricao": "CADEIRA GAMER GT NEPTUNE", "dt_prev": "25/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72438", "descricao": "MON GAMER 27 144HZ FHD IPS GT", "dt_prev": "28/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "71955", "descricao": "MON SLIM 27 100HZ GET", "dt_prev": "28/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72219", "descricao": "TECLADO E MOUSE SEM FIO GET COMPACT", "dt_prev": "28/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "71836", "descricao": "HEADPHONE BT GET GO AZUL", "dt_prev": "29/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "71837", "descricao": "HEADPHONE BT GET GO BRANCO", "dt_prev": "29/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "71838", "descricao": "HEADPHONE BT GET GO PRETO", "dt_prev": "29/08/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Leonardo", "foto_link": ""}, {"status": "Finalizado", "produto": "72383", "descricao": "MEM DDR4 8GB 3200 GET", "dt_prev": "10/09/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72384", "descricao": "MEM NOT DDR4 8GB 3200 GET", "dt_prev": "10/09/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "62430", "descricao": "CADEIRA GAMER GT MOON", "dt_prev": "17/09/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72449", "descricao": "PLACA AM4 A520S DDR4 M2 GET", "dt_prev": "20/09/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "69835", "descricao": "WEBCAM USB QHD GET PRO 2K", "dt_prev": "22/09/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72427", "descricao": "CXS AMPL BT TWS GET 2000W RMS EVOKE 2001", "dt_prev": "24/09/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72281", "descricao": "CARREG PORTATIL 10000MAH S/FIO VENT GET", "dt_prev": "26/09/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "67443", "descricao": "ADAPTADOR WI-FI USB 300MBPS 2.4G GET", "dt_prev": "26/09/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "67444", "descricao": "ADAPTADOR WI-FI USB 600MBPS 2.4/5G GET", "dt_prev": "26/09/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Nickolas", "foto_link": ""}, {"status": "Finalizado", "produto": "72398", "descricao": "CADEIRA OFFICE FLEX GET", "dt_prev": "28/09/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72279", "descricao": "LEITOR COD BARRAS FIXO 1D-2D GET", "dt_prev": "01/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72430", "descricao": "CADEIRA OFFICE SMART GET", "dt_prev": "10/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Nickolas", "foto_link": ""}, {"status": "Finalizado", "produto": "72431", "descricao": "CADEIRA OFFICE SMART PRO GET", "dt_prev": "10/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Alan", "foto_link": ""}, {"status": "Finalizado", "produto": "71840", "descricao": "IMP TERMICA GET USB ETHERNET", "dt_prev": "10/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Alan", "foto_link": ""}, {"status": "Finalizado", "produto": "72723", "descricao": "PVD GT610 64B 2GB DDR3 OX", "dt_prev": "10/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72724", "descricao": "PVD GT730 128B 4GB DDR3 OX", "dt_prev": "10/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Nickolas", "foto_link": ""}, {"status": "Finalizado", "produto": "72725", "descricao": "PVD GTX1050 128B 4GB DDR5 OX", "dt_prev": "10/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Leonardo", "foto_link": ""}, {"status": "Finalizado", "produto": "72726", "descricao": "PVD RTX3050 96B 6GB DDR6 OX", "dt_prev": "10/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Nickolas", "foto_link": ""}, {"status": "Finalizado", "produto": "72727", "descricao": "PVD GTX1060 192B 6GB DDR5 OX", "dt_prev": "10/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Nickolas", "foto_link": ""}, {"status": "Finalizado", "produto": "72728", "descricao": "PVD GTX1660 S 192B 6GB DDR6 OX", "dt_prev": "10/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Alan", "foto_link": ""}, {"status": "Finalizado", "produto": "72729", "descricao": "PVD RTX3060 192B 12GB DDR6 OX", "dt_prev": "10/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Alan", "foto_link": ""}, {"status": "Finalizado", "produto": "72306", "descricao": "FONTE 500W 80PLUS BRONZE GET", "dt_prev": "10/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Leonardo", "foto_link": ""}, {"status": "Finalizado", "produto": "73263", "descricao": "COMPUTADOR GT BUSINESS", "dt_prev": "26/10/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Alan", "foto_link": ""}, {"status": "Finalizado", "produto": "72499", "descricao": "PROJ GET 7000 FULL HD VISION 7 SMART", "dt_prev": "10/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Alan", "foto_link": ""}, {"status": "Finalizado", "produto": "68954", "descricao": "SMARTWATCH GET WATCH EASY BLUE", "dt_prev": "13/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "68955", "descricao": "SMARTWATCH GET WATCH VIBE ROSE", "dt_prev": "13/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72026", "descricao": "MOUSE S/FIO SILENCE GFT GET", "dt_prev": "13/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72667", "descricao": "MON PIVOT SLIM 23.8 120HZ IPS BC GET", "dt_prev": "14/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72668", "descricao": "MON PIVOT SLIM 23.8 120HZ IPS PT GET", "dt_prev": "14/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Alan", "foto_link": ""}, {"status": "Finalizado", "produto": "72549", "descricao": "MON GAMER 24 165HZ FHD IPS OX", "dt_prev": "14/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72550", "descricao": "MON GAMER 27 165HZ FHD IPS OX", "dt_prev": "14/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72510", "descricao": "PROJ GET 3000 FULL HD VISION 3 SMART", "dt_prev": "15/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71915", "descricao": "NO BREAK UPS 2000VA AUT/115V GET", "dt_prev": "15/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Eduarda", "foto_link": ""}, {"status": "Finalizado", "produto": "72739", "descricao": "LEITOR COD BARRAS USB LT-100 1D GET", "dt_prev": "17/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72740", "descricao": "LEITOR COD BARRAS BT LT-200B 2D GET", "dt_prev": "17/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "71839", "descricao": "HEADPHONE BT GO ROSA GET", "dt_prev": "18/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "69678", "descricao": "PROJ GET 5000 LUMENS FULL HD", "dt_prev": "20/11/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72607", "descricao": "MOUSEPAD C/APOIO GEL GET COMFORT", "dt_prev": "01/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72400", "descricao": "COPO TERMICO ESPRESSO 80ML TORRA GET", "dt_prev": "01/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Nickolas", "foto_link": ""}, {"status": "Finalizado", "produto": "72453", "descricao": "CABO HDMI 2.0 4K 1.8M 3D NYLON GET", "dt_prev": "01/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72325", "descricao": "MESA OFFICE PT GET", "dt_prev": "01/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Alan", "foto_link": ""}, {"status": "Finalizado", "produto": "72326", "descricao": "MESA OFFICE BC GET", "dt_prev": "01/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Alan", "foto_link": ""}, {"status": "Finalizado", "produto": "72327", "descricao": "MESA OFFICE RETRO GET", "dt_prev": "01/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Leonardo", "foto_link": ""}, {"status": "Finalizado", "produto": "72876", "descricao": "CADEIRA GAMER NEPTUNE OX", "dt_prev": "05/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72877", "descricao": "CADEIRA GAMER MOON OX", "dt_prev": "05/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Nickolas", "foto_link": ""}, {"status": "Finalizado", "produto": "72644", "descricao": "HEADPHONE BT GET ZEN ANC PRETO", "dt_prev": "19/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Leonardo", "foto_link": ""}, {"status": "Finalizado", "produto": "72814", "descricao": "HEADSET OFFICE PRIME USB GET", "dt_prev": "22/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Alan", "foto_link": ""}, {"status": "Finalizado", "produto": "73345", "descricao": "PEN DRIVE 16GB 2.0 GET", "dt_prev": "23/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "73346", "descricao": "PEN DRIVE 32GB 2.0 GET", "dt_prev": "23/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "73347", "descricao": "PEN DRIVE 64GB 2.0 GET", "dt_prev": "23/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "70658", "descricao": "TEC S/FIO SLIM SHIFT GET PT", "dt_prev": "28/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Geilson", "foto_link": ""}, {"status": "Finalizado", "produto": "72479", "descricao": "TEC S/FIO SLIM SHIFT GET BC", "dt_prev": "28/12/2025", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72506", "descricao": "GARRAFA TERMICA 710ML WAI BC GET", "dt_prev": "07/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "73257", "descricao": "BASE PARA LEITOR COD BARRAS USB GET", "dt_prev": "15/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Nickolas", "foto_link": ""}, {"status": "Finalizado", "produto": "72397", "descricao": "COPO TERMICO COLORS 600ML AZUL ES GET", "dt_prev": "09/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72898", "descricao": "FECHADURA DIGITAL SMARTQ GET", "dt_prev": "09/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Nickolas", "foto_link": ""}, {"status": "Finalizado", "produto": "72307", "descricao": "FONTE 700W 80PLUS BRONZE GET", "dt_prev": "09/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "72835", "descricao": "KIT GAMER TEC+MOU+HEADSET+MOUSEPAD OX PT", "dt_prev": "19/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "69185", "descricao": "MOUSE GAMER ASTRA BC OX", "dt_prev": "20/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Nickolas", "foto_link": ""}, {"status": "Finalizado", "produto": "72732", "descricao": "MOUSE GAMER ASTRA PT OX", "dt_prev": "20/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Nickolas", "foto_link": ""}, {"status": "Finalizado", "produto": "73233", "descricao": "GAVETA DE DINHEIRO CD 58M GET", "dt_prev": "20/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Finalizado", "produto": "73229", "descricao": "HEADSET OFFICE CALL GET", "dt_prev": "20/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72879", "descricao": "CADEIRA GAMER MERCURY 2D OX", "dt_prev": "27/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Nickolas", "foto_link": ""}, {"status": "Finalizado", "produto": "71792", "descricao": "CADEIRA OFFICE PRESIDENTE 2024 GET", "dt_prev": "05/02/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72562", "descricao": "CXS BT TWS GET CONNECT PTA", "dt_prev": "06/02/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "73353", "descricao": "MOUSEPAD C/APOIO GEL COMFORT 2 GET", "dt_prev": "25/02/2026", "chegou": "Não", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72537", "descricao": "BICICLETA ELETRICA BASKET TCN PT", "dt_prev": "10/04/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "72543", "descricao": "BICICLETA ELETRICA BASKET TCN BC", "dt_prev": "10/04/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "", "foto_link": ""}, {"status": "Finalizado", "produto": "73249", "descricao": "SOUNDBAR 2.0 GET", "dt_prev": "04/03/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "OK", "responsavel": "Thyago", "foto_link": ""}, {"status": "Iniciado", "produto": "72781", "descricao": "TEC USB MULTIMIDIA SLIM GET PT", "dt_prev": "10/03/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "73250", "descricao": "COOLER FAN RAINBOW 120MM P/ GAB GAMER OX", "dt_prev": "08/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "73041", "descricao": "COOLER FAN ARGB 120MM P/GAB GAMER OX", "dt_prev": "08/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "73004", "descricao": "PLACA AM4 A320 DDR4 GET", "dt_prev": "19/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "72810", "descricao": "HUB ADAPTADOR USB-C 6 EM 1 GET", "dt_prev": "20/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "Leonardo", "foto_link": ""}, {"status": "Iniciado", "produto": "73223", "descricao": "HUB ADAPTADOR USB-C 5 EM 1 GET", "dt_prev": "20/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "Leonardo", "foto_link": ""}, {"status": "Iniciado", "produto": "72820", "descricao": "HUB ADAPTADOR USB-C 7 EM 1 GET", "dt_prev": "20/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "Leonardo", "foto_link": ""}, {"status": "Iniciado", "produto": "72780", "descricao": "TEC GAMER MECANICO TKL 60% MOON OX", "dt_prev": "20/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "Thyago", "foto_link": ""}, {"status": "Iniciado", "produto": "71833", "descricao": "EXTENSAO MULTIPLA 6 TOMADAS 10A BC GET", "dt_prev": "22/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "73282", "descricao": "PLACA S1151 H310S DDR4 M2 GET", "dt_prev": "28/01/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "69164", "descricao": "TEC GAMER MECANICO NEBULA OX", "dt_prev": "06/02/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "73365", "descricao": "CABO ADAPT USB-C P/HDMI GET", "dt_prev": "06/02/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "72563", "descricao": "CXS BT TWS GET POP LITE", "dt_prev": "06/02/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "72380", "descricao": "SSD EXT 1TB GET", "dt_prev": "10/02/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "72382", "descricao": "SSD EXT 256GB GET", "dt_prev": "10/02/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "72891", "descricao": "PLACA S1151 H110S DDR4 M2 GET", "dt_prev": "23/02/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "73221", "descricao": "NO BREAK UPS 600VA AUT/115V GET", "dt_prev": "24/02/2026", "chegou": "Não", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "72911", "descricao": "ALCA PARA GARRAFA TERMICA PT GET", "dt_prev": "04/03/2026", "chegou": "Sim", "novidades": "OK", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "72912", "descricao": "ALCA PARA GARRAFA TERMICA ROSA CL GET", "dt_prev": "04/03/2026", "chegou": "Sim", "novidades": "OK", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "72940", "descricao": "ESCOVA SILICONE PARA COPOS/GARRAFAS GET", "dt_prev": "25/02/2026", "chegou": "Não", "novidades": "OK", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Iniciado", "produto": "73051", "descricao": "FONE TWS BEAT PT GET", "dt_prev": "20/05/2026", "chegou": "Não", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Pausado", "produto": "72878", "descricao": "CADEIRA GAMER MARS 2D OX", "dt_prev": "10/03/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "72511", "descricao": "PROJ GET 5000 FULL HD VISION 5 SMART", "dt_prev": "25/02/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "72935", "descricao": "TEC S/FIO SLIM KEYPRO GET", "dt_prev": "25/02/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "72072", "descricao": "SUPORTE P/CPU C/RODAS GET", "dt_prev": "04/03/2026", "chegou": "Sim", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "71941", "descricao": "CAPA SILICONE GET 1000ML AZUL MAR", "dt_prev": "25/02/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "71942", "descricao": "CAPA SILICONE GET 1000ML CINZA", "dt_prev": "27/02/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "72394", "descricao": "APRESENTADOR DE SLIDES GET", "dt_prev": "10/03/2026", "chegou": "Sim", "novidades": "OK", "fotos": "OK", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "73393", "descricao": "TEC USB BUSINESS COM TECLAS A LASER GET", "dt_prev": "10/03/2026", "chegou": "Sim", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "73404", "descricao": "IMP ETIQUETAS PRINT E108 GET", "dt_prev": "10/03/2026", "chegou": "Sim", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "73392", "descricao": "MOUSE BUSINESS AMBIDESTRO CABO 1,5M GET", "dt_prev": "10/03/2026", "chegou": "Sim", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "73520", "descricao": "COOLER FAN ARGB 120MM P/GAB GAMER OX 2", "dt_prev": "14/03/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "72059", "descricao": "MOUSE S/FIO WSL BC GET", "dt_prev": "14/03/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "72612", "descricao": "HEADSET GAMER ASTRA OX", "dt_prev": "14/03/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "70534", "descricao": "FONE TWS BUDS LITE BC GET", "dt_prev": "14/03/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "70536", "descricao": "FONE TWS SMART BUDS BC GET", "dt_prev": "24/03/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "72540", "descricao": "MOUSE GAMER NEBULA OX", "dt_prev": "24/03/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "72839", "descricao": "TBL NEXPRO 64GB 10 4G GET", "dt_prev": "30/03/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "73577", "descricao": "MON 24 60HZ FHD TCN BASE REDONDA", "dt_prev": "10/04/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "72821", "descricao": "BICICLETA ELETRICA STREET GET", "dt_prev": "20/05/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "72822", "descricao": "BICICLETA ELETRICA CITY GET PT", "dt_prev": "20/05/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}, {"status": "Não iniciado", "produto": "73828", "descricao": "ANTENA INTERNA HDTV DIG OMNI ATV GET", "dt_prev": "20/05/2026", "chegou": "Não", "novidades": "Pendente", "fotos": "Pendente", "lp": "Pendente", "responsavel": "", "foto_link": ""}];
 
+const EMBEDDED_DATA = JSON.parse(JSON.stringify(DATA));
+
 // ═══ STATE ═══
 let filtered = [];
 let activeFilter = 'all';
 let searchQ = '';
+let activeBrand = 'all';
 let sk = 'dt_prev', sd = 1;
 let page = 1;
 const PER = 50;
@@ -639,6 +769,19 @@ function parseDate(s) {
   const p = s.split('/');
   return p.length === 3 ? new Date(+p[2], +p[1]-1, +p[0]).getTime() : 0;
 }
+
+function getBrand(desc) {
+  const d = (desc||'').toUpperCase();
+  // Check for brand keywords - order matters (check specific first)
+  if (/\bTCN\b/.test(d)) return 'TCN';
+  if (/\bOX\b/.test(d)) return 'OX';
+  // Default to GET for items containing GET or anything else
+  if (/\bGET\b/.test(d)) return 'GET';
+  return 'GET';
+}
+
+const BRAND_COLORS = { GET: '#b5cc00', OX: '#38b2ff', TCN: '#c084fc' };
+
 function chipOf(v) {
   const n = nv(v);
   if (n==='ok') return `<span class="chip chip-ok">OK</span>`;
@@ -663,6 +806,7 @@ function statusClass(s) {
 function changeStatus(idx, val) {
   DATA[idx].status = val;
   saveStatusToStorage();
+  autoSaveAll();
   applyFilters();
   toast('✅', `Status de ${DATA[idx].produto} → "${val}"`);
 }
@@ -701,6 +845,68 @@ function updateFotoPreview() {
   }
 }
 
+
+// ─── AUTO-SAVE ALL DATA ───
+const LS_DATA_KEY = 'get-produto-data-full';
+
+function autoSaveAll() {
+  try {
+    localStorage.setItem(LS_DATA_KEY, JSON.stringify(DATA));
+    localStorage.setItem(LS_VERSION_KEY, getDataVersion());
+    showAutoSaveIndicator();
+  } catch(e) { console.warn('Auto-save failed:', e); }
+}
+
+function showAutoSaveIndicator() {
+  const dot = document.getElementById('autosaveDot');
+  const text = document.getElementById('autosaveText');
+  if (dot && text) {
+    dot.classList.add('saving');
+    text.textContent = 'Salvando...';
+    setTimeout(() => {
+      dot.classList.remove('saving');
+      text.textContent = 'Auto-save ativo';
+    }, 1500);
+  }
+}
+
+function getDataVersion() {
+  // Generate a simple hash from the embedded DATA to detect changes
+  const str = EMBEDDED_DATA.map(r => r.produto + r.descricao).join('|');
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return 'v' + Math.abs(hash);
+}
+
+const LS_VERSION_KEY = 'get-produto-data-version';
+
+function loadFullData() {
+  try {
+    const currentVersion = getDataVersion();
+    const savedVersion = localStorage.getItem(LS_VERSION_KEY);
+    const saved = localStorage.getItem(LS_DATA_KEY);
+
+    if (saved && savedVersion === currentVersion) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        DATA = parsed;
+        return true;
+      }
+    }
+    // Version mismatch or no saved data: clear stale cache
+    if (savedVersion && savedVersion !== currentVersion) {
+      localStorage.removeItem(LS_DATA_KEY);
+      localStorage.removeItem(LS_VERSION_KEY);
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem(LS_STATUS_KEY);
+    }
+  } catch(e) {}
+  return false;
+}
+
 // ─── LOCAL STORAGE ───
 const LS_KEY = 'get-produto-links';
 const LS_STATUS_KEY = 'get-produto-status';
@@ -733,6 +939,7 @@ function confirmFotoLink() {
   const val = document.getElementById('fotoModalInput').value.trim();
   DATA[fotoModalIdx].foto_link = val;
   saveLinksToStorage();
+  autoSaveAll();
   applyFilters();
   toast('🖼️', val ? `Link salvo para ${DATA[fotoModalIdx].produto}` : `Link removido de ${DATA[fotoModalIdx].produto}`);
   document.getElementById('fotoModalOverlay').classList.remove('open');
@@ -743,16 +950,100 @@ function deleteFotoLink() {
   if (fotoModalIdx < 0) return;
   DATA[fotoModalIdx].foto_link = '';
   saveLinksToStorage();
+  autoSaveAll();
   applyFilters();
   toast('🗑️', `Link removido de ${DATA[fotoModalIdx].produto}`);
   document.getElementById('fotoModalOverlay').classList.remove('open');
   fotoModalIdx = -1;
 }
 
+
+// ─── CHART ───
+let launchChart = null;
+function renderChart() {
+  const canvas = document.getElementById('launchChart');
+  if (!canvas) return;
+
+  // Determine which data to chart based on active brand
+  const chartData = activeBrand === 'all' ? DATA : DATA.filter(r => getBrand(r.descricao) === activeBrand);
+
+  // Group by month
+  const monthMap = {};
+  chartData.forEach(r => {
+    if (!r.dt_prev) return;
+    const parts = r.dt_prev.split('/');
+    if (parts.length !== 3) return;
+    const key = parts[1] + '/' + parts[2]; // MM/YYYY
+    monthMap[key] = (monthMap[key]||0) + 1;
+  });
+
+  // Sort by date
+  const sorted = Object.entries(monthMap).sort((a, b) => {
+    const [ma, ya] = a[0].split('/').map(Number);
+    const [mb, yb] = b[0].split('/').map(Number);
+    return (ya*12+ma) - (yb*12+mb);
+  });
+
+  const labels = sorted.map(([k]) => k);
+  const values = sorted.map(([, v]) => v);
+
+  // Brand-specific colors
+  const brandColor = activeBrand !== 'all' ? BRAND_COLORS[activeBrand] : '#b5cc00';
+
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const textColor = isDark ? '#8a909e' : '#4a5568';
+
+  if (launchChart) launchChart.destroy();
+
+  launchChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: activeBrand === 'all' ? 'Todas' : activeBrand,
+        data: values,
+        backgroundColor: brandColor + '33',
+        borderColor: brandColor,
+        borderWidth: 2,
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: isDark ? '#1e222b' : '#fff',
+          titleColor: isDark ? '#f0f2f5' : '#111',
+          bodyColor: isDark ? '#8a909e' : '#4a5568',
+          borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+          borderWidth: 1,
+          cornerRadius: 8,
+          padding: 10,
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 10 } }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: gridColor },
+          ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 10 }, stepSize: 1 }
+        }
+      }
+    }
+  });
+}
+
 // ─── EXPORT CSV ───
 function exportCSV() {
   const headers = ['STATUS','PRODUTO','DESCRIÇÃO','Dt Prev Liber','Chegou?','Novidades','Fotos','Landing Pages','Responsável'];
-  const rows = DATA.map(r => [
+  const rows = filtered.map(r => [
     r.status, r.produto, r.descricao, r.dt_prev, r.chegou,
     r.novidades, r.foto_link || r.fotos, r.lp, r.responsavel
   ].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(';'));
@@ -762,7 +1053,7 @@ function exportCSV() {
   const a = document.createElement('a');
   a.href = url; a.download = 'acompanhamento_get.csv'; a.click();
   URL.revokeObjectURL(url);
-  toast('📥', 'CSV exportado com links incluídos!');
+  toast('📥', `CSV exportado — ${filtered.length} produtos filtrados!`);
 }
 
 // ─── STATS ───
@@ -798,6 +1089,8 @@ function renderStats() {
     <div class="prog-fill" style="width:${pI}%;background:#38b2ff;margin-left:1px"></div>
     <div class="prog-fill" style="width:${pN}%;background:#ff9f38;margin-left:1px"></div>
     <div class="prog-fill" style="width:${pP}%;background:#c084fc;margin-left:1px"></div>`;
+  renderBrandTabs();
+  renderBrandCounters();
   document.getElementById('progLegend').innerHTML = `
     <span class="prog-item"><span class="prog-dot" style="background:#b5cc00"></span>Finalizado (${c.Finalizado})</span>
     <span class="prog-item"><span class="prog-dot" style="background:#38b2ff"></span>Iniciado (${c.Iniciado})</span>
@@ -805,14 +1098,72 @@ function renderStats() {
     <span class="prog-item"><span class="prog-dot" style="background:#c084fc"></span>Pausado (${c.Pausado||0})</span>`;
 }
 
+
+// ─── BRAND TABS ───
+function renderBrandTabs() {
+  const brands = ['all', 'GET', 'OX', 'TCN'];
+  const counts = { GET: 0, OX: 0, TCN: 0 };
+  DATA.forEach(r => { const b = getBrand(r.descricao); counts[b] = (counts[b]||0)+1; });
+  const total = DATA.length;
+
+  document.getElementById('brandTabs').innerHTML = brands.map(b => {
+    const isActive = activeBrand === b;
+    const count = b === 'all' ? total : (counts[b]||0);
+    const label = b === 'all' ? 'Todas as Marcas' : b;
+    return `<button class="brand-tab${isActive?' active':''}" onclick="setBrand('${b}')">
+      ${label} <span class="brand-count">${count}</span>
+    </button>`;
+  }).join('');
+}
+
+// ─── BRAND COUNTERS ───
+function renderBrandCounters() {
+  const brands = ['GET', 'OX', 'TCN'];
+  const counters = {};
+  brands.forEach(b => { counters[b] = { total: 0, finalizado: 0, iniciado: 0, nao: 0, pausado: 0 }; });
+  DATA.forEach(r => {
+    const b = getBrand(r.descricao);
+    if (!counters[b]) return;
+    counters[b].total++;
+    const s = nv(r.status);
+    if (s==='finalizado') counters[b].finalizado++;
+    else if (s==='iniciado') counters[b].iniciado++;
+    else if (s==='pausado') counters[b].pausado++;
+    else counters[b].nao++;
+  });
+
+  document.getElementById('brandCounters').innerHTML = brands.map(b => {
+    const c = counters[b];
+    return `<div class="brand-counter-card bc-${b.toLowerCase()}">
+      <div class="brand-counter-head">
+        <span class="brand-counter-name">${b}</span>
+      </div>
+      <div class="brand-counter-total">${c.total}</div>
+      <div class="brand-counter-detail">
+        <span>Fin: ${c.finalizado}</span>
+        <span>Ini: ${c.iniciado}</span>
+        <span>Pend: ${c.nao}</span>
+        <span>Paus: ${c.pausado}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setBrand(b) {
+  activeBrand = b;
+  localStorage.setItem('get-active-brand', b);
+  applyFilters();
+}
+
 // ─── FILTERS ───
 function applyFilters() {
   filtered = DATA.filter((r,i) => {
     r._idx = i;
     const mf = activeFilter==='all' || nv(r.status)===nv(activeFilter);
+    const mb = activeBrand==='all' || getBrand(r.descricao)===activeBrand;
     const q = nv(searchQ);
     const ms = !q || nv(r.produto).includes(q) || nv(r.descricao).includes(q) || nv(r.responsavel).includes(q);
-    return mf && ms;
+    return mf && ms && mb;
   });
   filtered.sort((a,b) => {
     let va = a[sk], vb = b[sk];
@@ -821,6 +1172,7 @@ function applyFilters() {
   });
   page = 1;
   renderStats();
+  renderChart();
   render();
 }
 
@@ -940,10 +1292,12 @@ function handleFileUpload(input) {
       }
       if (!newData.length) throw new Error('Nenhum produto encontrado');
       DATA = newData;
-      activeFilter = 'all'; searchQ = '';
+      activeFilter = 'all'; searchQ = ''; activeBrand = 'all';
+      localStorage.setItem('get-active-brand', 'all');
       document.getElementById('searchInput').value = '';
       applyFilters();
       showUploadStatus('success', `✅ ${newData.length} produtos importados com sucesso!`);
+      autoSaveAll();
       toast('🚀', `Base atualizada — ${newData.length} produtos`);
     } catch(err) {
       showUploadStatus('error', `❌ Erro: ${err.message}`);
@@ -1007,7 +1361,12 @@ document.addEventListener('keydown', e => {
 });
 
 // ─── INIT ───
-loadFromStorage();
+// Try to load full auto-saved data first, fallback to embedded + localStorage
+if (!loadFullData()) {
+  loadFromStorage();
+}
+// Restore brand tab
+activeBrand = localStorage.getItem('get-active-brand') || 'all';
 applyFilters();
 </script>
 </body>
