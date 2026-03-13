@@ -490,6 +490,7 @@ td { padding: 11px 14px; vertical-align: middle; }
       <span class="live-dot"></span>
       <span id="totalLive">0</span> produtos
     </div>
+    <button class="theme-btn" onclick="exportCSV()" title="Exportar CSV com links" style="font-size:16px;">📥</button>
     <button class="theme-btn" onclick="toggleTheme()" title="Alternar tema" id="themeBtn">🌙</button>
   </div>
 </header>
@@ -503,7 +504,7 @@ td { padding: 11px 14px; vertical-align: middle; }
     <div class="upload-sub">CSV separado por ponto-e-vírgula</div>
   </div>
   <div class="upload-info">
-    <div class="upload-info-title">Colunas esperadas na planilha</div>
+    <div class="upload-info-title">Colunas</div>
     <div class="format-grid">
       <div class="format-item"><strong>1</strong> STATUS</div>
       <div class="format-item"><strong>2</strong> PRODUTO</div>
@@ -661,22 +662,107 @@ function statusClass(s) {
 // ─── ACTIONS ───
 function changeStatus(idx, val) {
   DATA[idx].status = val;
+  saveStatusToStorage();
   applyFilters();
-  toast('✅', `Status do produto ${DATA[idx].produto} → "${val}"`);
+  toast('✅', `Status de ${DATA[idx].produto} → "${val}"`);
 }
 
-function saveFotoLink(idx, val) {
-  DATA[idx].foto_link = val;
-  const btn = document.getElementById('fbtn-'+idx);
-  if (btn) {
-    if (val.trim()) {
-      btn.href = val.trim();
-      btn.classList.remove('disabled');
-    } else {
-      btn.href = '#';
-      btn.classList.add('disabled');
-    }
+// ─── FOTO MODAL ───
+let fotoModalIdx = -1;
+
+function openFotoModal(idx) {
+  fotoModalIdx = idx;
+  const r = DATA[idx];
+  document.getElementById('fotoModalTitle').textContent = 'Link da Foto — ' + r.produto;
+  document.getElementById('fotoModalSub').textContent = r.descricao;
+  const input = document.getElementById('fotoModalInput');
+  input.value = r.foto_link || '';
+  updateFotoPreview();
+  document.getElementById('fotoModalOverlay').classList.add('open');
+  setTimeout(() => input.focus(), 100);
+}
+
+function closeFotoModal(e) {
+  if (e && e.target !== document.getElementById('fotoModalOverlay')) return;
+  document.getElementById('fotoModalOverlay').classList.remove('open');
+  fotoModalIdx = -1;
+}
+
+function updateFotoPreview() {
+  const val = document.getElementById('fotoModalInput').value.trim();
+  const preview = document.getElementById('fotoPreview');
+  const link = document.getElementById('fotoPreviewLink');
+  if (val) {
+    preview.style.display = 'block';
+    link.href = val;
+    link.textContent = '↗ ' + (val.length > 60 ? val.slice(0,60)+'…' : val);
+  } else {
+    preview.style.display = 'none';
   }
+}
+
+// ─── LOCAL STORAGE ───
+const LS_KEY = 'get-produto-links';
+const LS_STATUS_KEY = 'get-produto-status';
+
+function saveLinksToStorage() {
+  const links = {};
+  DATA.forEach((r, i) => { if (r.foto_link) links[r.produto] = r.foto_link; });
+  localStorage.setItem(LS_KEY, JSON.stringify(links));
+}
+
+function saveStatusToStorage() {
+  const statuses = {};
+  DATA.forEach(r => { statuses[r.produto] = r.status; });
+  localStorage.setItem(LS_STATUS_KEY, JSON.stringify(statuses));
+}
+
+function loadFromStorage() {
+  try {
+    const links = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+    const statuses = JSON.parse(localStorage.getItem(LS_STATUS_KEY) || '{}');
+    DATA.forEach(r => {
+      if (links[r.produto]) r.foto_link = links[r.produto];
+      if (statuses[r.produto]) r.status = statuses[r.produto];
+    });
+  } catch(e) {}
+}
+
+function confirmFotoLink() {
+  if (fotoModalIdx < 0) return;
+  const val = document.getElementById('fotoModalInput').value.trim();
+  DATA[fotoModalIdx].foto_link = val;
+  saveLinksToStorage();
+  applyFilters();
+  toast('🖼️', val ? `Link salvo para ${DATA[fotoModalIdx].produto}` : `Link removido de ${DATA[fotoModalIdx].produto}`);
+  document.getElementById('fotoModalOverlay').classList.remove('open');
+  fotoModalIdx = -1;
+}
+
+function deleteFotoLink() {
+  if (fotoModalIdx < 0) return;
+  DATA[fotoModalIdx].foto_link = '';
+  saveLinksToStorage();
+  applyFilters();
+  toast('🗑️', `Link removido de ${DATA[fotoModalIdx].produto}`);
+  document.getElementById('fotoModalOverlay').classList.remove('open');
+  fotoModalIdx = -1;
+}
+
+// ─── EXPORT CSV ───
+function exportCSV() {
+  const headers = ['STATUS','PRODUTO','DESCRIÇÃO','Dt Prev Liber','Chegou?','Novidades','Fotos','Landing Pages','Responsável'];
+  const rows = DATA.map(r => [
+    r.status, r.produto, r.descricao, r.dt_prev, r.chegou,
+    r.novidades, r.foto_link || r.fotos, r.lp, r.responsavel
+  ].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(';'));
+  const csv = [headers.join(';'), ...rows].join('\n');
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'acompanhamento_get.csv'; a.click();
+  URL.revokeObjectURL(url);
+  toast('📥', 'CSV exportado com links incluídos!');
 }
 
 // ─── STATS ───
@@ -905,7 +991,23 @@ document.getElementById('searchInput').addEventListener('input', e => {
   searchQ = e.target.value; applyFilters();
 });
 
+// ─── KEYBOARD ───
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('fotoModalOverlay');
+    if (overlay.classList.contains('open')) {
+      overlay.classList.remove('open');
+      fotoModalIdx = -1;
+    }
+  }
+  if (e.key === 'Enter' && fotoModalIdx >= 0) {
+    const overlay = document.getElementById('fotoModalOverlay');
+    if (overlay.classList.contains('open')) confirmFotoLink();
+  }
+});
+
 // ─── INIT ───
+loadFromStorage();
 applyFilters();
 </script>
 </body>
